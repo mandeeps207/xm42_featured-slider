@@ -88,7 +88,7 @@ function mestore_woocommerce_header_cart() {
         <ul id="site-header-cart" class="site-header-cart">
 			<li class="menu-title">CART</li>
             <li class="menu-cart total <?php echo esc_attr( $class ); ?>">
-				<a href="<?php echo WC()->cart->get_cart_url(); ?>" title="<?php _e( 'View your shopping cart' ); ?>">
+				<a href="<?php echo WC()->cart->get_cart_url(); ?>" class="cart-contents" title="<?php _e( 'View your shopping cart' ); ?>">
 					<?php 
 						echo get_woocommerce_currency_symbol();
 						echo wc_format_decimal(WC()->cart->total, 2 );
@@ -195,17 +195,24 @@ function custom_scripts() {
 add_action( 'wp_enqueue_scripts', 'custom_scripts', 10 );
 
 // Mini cart total update via ajax
-add_filter( 'woocommerce_add_to_cart_fragments', 'woocommerce_header_add_to_cart_fragment' );
-function woocommerce_header_add_to_cart_fragment( $fragments ) {
+add_filter( 'woocommerce_add_to_cart_fragments', 'mestore_woocommerce_cart_link_fragment' );
+function mestore_woocommerce_cart_link_fragment( $fragments ) {
     ob_start();
     ?>
-    <a class="cart-contents" href="<?php echo wc_get_cart_url(); ?>" title="<?php _e( 'View your shopping cart' ); ?>"><?php echo WC()->cart->get_cart_total(); ?></a> 
+     <a href="<?php echo WC()->cart->get_cart_url(); ?>" class="cart-contents" title="<?php _e( 'View your shopping cart' ); ?>">
+		<?php 
+			echo get_woocommerce_currency_symbol();
+			echo wc_format_decimal(WC()->cart->total, 2 ); 
+		?>
+	</a>
     <?php
 
-    $fragments['a.cart-contents'] = ob_get_clean();
+   $fragments['.menu-cart.total a.cart-contents'] = ob_get_clean();
 
-    return $fragments;
-}
+   return $fragments;
+} 
+
+
 
 // Featured items slider
 function xm42_carousel_slider() {

@@ -86,12 +86,11 @@ jQuery(document).ready(function(){
 	var add_to_cart_btn = jQuery('.ajax_add_to_cart');
 	var spinner = jQuery('<span class="spinner"></span>');
 	
-	jQuery(add_to_cart_btn).on('click', function(e){
+	add_to_cart_btn.on('click', function(e){
 		e.preventDefault();
 		let itemID = parseInt(jQuery(this).val());
 		let qty = 1;
 		let btn = jQuery(this);
-		console.log(itemID);
 		
 		btn.append(spinner); // show spinner
 		btn.prop('disabled', true); // disable add to cart button
@@ -106,20 +105,19 @@ jQuery(document).ready(function(){
 				quantity: qty
 			},
 			success: function(res){
-				
-				let cart_total = res.fragments['a.cart-contents']; // Get cart total
-				
-				jQuery('.menu-cart-total').html(cart_total); // Update cart total	
-				
-				spinner.hide(); // hide spinner
+				let cartTotalSelector = '.menu-cart.total a.cart-contents';
+				jQuery(cartTotalSelector).replaceWith(res.fragments[cartTotalSelector]); // Get cart total
+
 				btn.prop('disabled', false); // enable add to cart button
 				btn.text('VIEW CART'); // change add to cart btn text
 				btn.attr('onclick', "location.href='" + cart_url + "';"); // go to cart link add
 			},
 			error: function(err) {
-				spinner.hide(); // hide spinner
 				btn.prop('disabled', false); // enable add to cart button
 				console.log(err);
+			},
+			complete: function(){
+				spinner.remove();
 			}
 		});
 	});
